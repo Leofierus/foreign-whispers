@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Download Status</title>
+</head>
+<body>
+    {% block content %}
+    <h1>Video Download Status</h1>
+
+        {% if download_success %}
+        <p>Video has been downloaded and renamed to <strong>{{ new_filename }}.mp4</strong></p>
+        {% else %}
+        <p>Video download failed due to error: <strong>{{ download_error }}</strong></p>
+        {% endif %}
+
+        <a href="{% url 'download_video' %}">Back to Video Downloader</a>
+    {% endblock %}
+</body>
+</html>
