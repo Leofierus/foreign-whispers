@@ -23,6 +23,10 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 - `media/`: Directory for storing downloaded videos, captions, and transcripts.
 - `templates/`: HTML templates used in the project.
 
+## Team Members
+- Malhar Patel (mkp6112@nyu.edu)
+- Ruben Garcia (rg4352@nyu.edu)
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
