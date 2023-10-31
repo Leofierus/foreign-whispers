@@ -1,0 +1,4 @@
+Django
+django-crispy-forms
+pytube3
+youtube-transcript-api
