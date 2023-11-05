@@ -13,8 +13,14 @@ def extract_audio(video_path):
 def transcribe_audio(audio_path):
     model = whisper.load_model("base")
     transcript = whisper.transcribe(model, audio_path)
+    segments = transcript.get('segments') if 'segments' in transcript else []
+
     transcript_path = audio_path.replace(".mp3", "_whisper.txt")
-    transcript_str = str(transcript)
-    with open(transcript_path, 'w', encoding='utf-8') as transcript_file:
-        transcript_file.write(transcript_str)
+
+    with open(transcript_path, 'w', encoding='utf-8') as transcript_file:    
+        for segment in segments:
+            text = segment['text']
+            start = segment['start']
+            end = segment['end']
+            transcript_file.write(f"{start}-{end}: {text}\n")
     return transcript_path
