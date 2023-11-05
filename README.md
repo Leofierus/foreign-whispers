@@ -1,6 +1,6 @@
 # Foreign Whispers - YouTube Video Downloader
 
-Foreign Whispers is a Django web application that allows users to download YouTube videos and their associated captions and transcripts.
+Foreign Whispers is a Django web application that allows users to download YouTube videos and their associated captions and transcripts along with extracting the audio from the file and then using [whisper](https://github.com/openai/whisper) library to transcribe the audio file.
 
 ## Installation
 
@@ -25,12 +25,24 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 
 ## Project Screenshots
 
-### Milestone 1
+<details>
+<summary>Milestone 1</summary>
+  
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/d0e3fcac-bd56-4aa2-846f-4bbd6e03b50d)
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/c5b10734-8e21-4a69-9e43-38b7dafae349)
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/1fc2c275-4161-499f-bb95-e8dd96e912c8)
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/704e92ed-1146-4af5-ad6f-10089de3afe1)
+</details>
 
+<details>
+<summary>Milestone 2</summary>
+  
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/84728d52-3755-4024-8d8a-298f3d56f51a)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/c5b10734-8e21-4a69-9e43-38b7dafae349)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/eaf2baad-9eab-4e5d-9bc4-0c528e12c769)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/8bd6070b-dafd-4be5-adcd-24b85a60e9a2)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/b0c984ff-3d44-4e92-ba20-87c0ab5ce9e7)
+</details>
 
 ## Team Members
 - Malhar Patel (mkp6112@nyu.edu)
