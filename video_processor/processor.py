@@ -19,8 +19,9 @@ def transcribe_audio(audio_path):
 
     with open(transcript_path, 'w', encoding='utf-8') as transcript_file:    
         for segment in segments:
-            text = segment['text']
-            start = segment['start']
-            end = segment['end']
-            transcript_file.write(f"{start}-{end}: {text}\n")
+            text = segment['text'].lstrip()
+            # Use a precision of 2 decimal places
+            start = f"{segment['start']:.2f}"
+            end = f"{segment['end']:.2f}"
+            transcript_file.write(f"{start} - {end} :\n{text}\n\n")
     return transcript_path
