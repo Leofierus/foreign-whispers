@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from requests import RequestException
 
+from video_processor.processor import extract_audio, transcribe_audio
 from .forms import VideoDownloadForm
 from .models import Video
 from pytube import YouTube
@@ -47,6 +48,14 @@ def download_video(request):
                     downloaded_captions_path=f"media/{captions_filename}" if captions else None,
                     downloaded_transcript_path=f"media/{transcript_filename}" if not captions else None
                 )
+
+                # Extract audio from the downloaded video
+                extracted_audio = extract_audio(f"media/{name}.mp4")
+                Video.objects.filter(title=yt.title).update(extracted_audio_path=extracted_audio)
+
+                # Use whisper to transcribe the audio
+                extracted_transcript = transcribe_audio(extracted_audio)
+                Video.objects.filter(title=yt.title).update(extracted_transcript_path=extracted_transcript)
 
                 return download_status(request, True, None, name)
 

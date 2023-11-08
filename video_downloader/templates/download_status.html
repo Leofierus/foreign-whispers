@@ -9,6 +9,7 @@
 
         {% if download_success %}
         <p>Video has been downloaded and renamed to <strong>{{ new_filename }}.mp4</strong></p>
+        <p>The audio has been extracted along with transcripts for the video.</p>
         {% else %}
         <p>Video download failed due to error: <strong>{{ download_error }}</strong></p>
         {% endif %}
