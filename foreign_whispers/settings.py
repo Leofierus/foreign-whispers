@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'video_downloader'
+    'video_downloader',
+    'video_processor',
+    'translator',
+
 ]
 
 MIDDLEWARE = [

@@ -7,6 +7,7 @@ from .models import Video
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
 from youtube_transcript_api import YouTubeTranscriptApi
+from translator.utils import translate_file
 
 
 def download_video(request):
@@ -37,8 +38,8 @@ def download_video(request):
 
                     with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
                         for entry in transcript:
-                            transcript_file.write(f"{entry['start']} --> {entry['start'] + entry['duration']}\n")
-                            transcript_file.write(f"{entry['text']}\n\n")
+                            transcript_file.write(f"{entry['start']} --> {entry['start'] + entry['duration']}"+': ')
+                            transcript_file.write(f"{entry['text']}\n")
 
                 # Create a new Video object in the database
                 Video.objects.create(
@@ -56,7 +57,10 @@ def download_video(request):
                 # Use whisper to transcribe the audio
                 extracted_transcript = transcribe_audio(extracted_audio)
                 Video.objects.filter(title=yt.title).update(extracted_transcript_path=extracted_transcript)
-
+                
+                #translating both transcripts to french
+                translate_file(transcript_file_path)
+                translate_file(extracted_transcript)
                 return download_status(request, True, None, name)
 
             except (RegexMatchError, VideoUnavailable, PytubeError, RequestException) as e:
