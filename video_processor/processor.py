@@ -22,5 +22,5 @@ def transcribe_audio(audio_path):
             text = segment['text'].lstrip()
             start = f"{segment['start']:.2f}"
             end = f"{segment['end']:.2f}"
-            transcript_file.write(f"{start} - {end} :\n{text}\n\n")
+            transcript_file.write(f"## {start} - {end} :\n{text}\n\n")
     return transcript_path
