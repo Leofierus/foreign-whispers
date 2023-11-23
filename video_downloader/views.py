@@ -7,6 +7,7 @@ from .models import Video
 from pytube import YouTube
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
 from youtube_transcript_api import YouTubeTranscriptApi
+from translator.utils import translate_file
 
 
 def download_video(request):
@@ -14,6 +15,7 @@ def download_video(request):
         form = VideoDownloadForm(request.POST)
         if form.is_valid():
             video_url = form.cleaned_data['video_url']
+            target_language = form.cleaned_data['target_language']
 
             try:
                 yt = YouTube(video_url)
@@ -27,18 +29,18 @@ def download_video(request):
 
                 if captions:
                     captions_content = captions.generate_srt_captions()
-                    captions_file_path = "media/"+captions_filename
+                    captions_file_path = "media/" + captions_filename
 
                     with open(captions_file_path, 'w', encoding='utf-8') as captions_file:
                         captions_file.write(captions_content)
                 else:
                     transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
-                    transcript_file_path = "media/"+transcript_filename
+                    transcript_file_path = "media/" + transcript_filename
 
                     with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
                         for entry in transcript:
-                            transcript_file.write(f"{entry['start']} --> {entry['start'] + entry['duration']}\n")
-                            transcript_file.write(f"{entry['text']}\n\n")
+                            transcript_file.write(f"## {entry['start']:.2f} - {(entry['start']+entry['duration']):.2f}")
+                            transcript_file.write(f":\n{entry['text']}\n\n")
 
                 # Create a new Video object in the database
                 Video.objects.create(
@@ -56,6 +58,10 @@ def download_video(request):
                 # Use whisper to transcribe the audio
                 extracted_transcript = transcribe_audio(extracted_audio)
                 Video.objects.filter(title=yt.title).update(extracted_transcript_path=extracted_transcript)
+
+                # Use t5-model to translate the transcript
+                translated_file = translate_file(extracted_transcript, target_language)
+                Video.objects.filter(title=yt.title).update(translated_transcript_path=translated_file)
 
                 return download_status(request, True, None, name)
 

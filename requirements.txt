@@ -6,3 +6,5 @@ moviepy
 pytube
 requests
 openai-whisper
+transformers
+sentencepiece

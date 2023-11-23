@@ -1,5 +1,37 @@
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Download</button>
-</form>
+{% load static %}
+<!-- downloader.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Video Downloader</h1>
+
+    <form method="post" class="download-form">
+        {% csrf_token %}
+
+        <label for="{{ form.video_url.id_for_label }}">Video URL:</label>
+        {{ form.video_url }}
+
+        <label for="{{ form.target_language.id_for_label }}">Target Language:</label>
+        {{ form.target_language }}
+
+        <button type="submit">Download</button>
+    </form>
+
+{#    {% if processing %}#}
+{#        <div class="loader">#}
+{#            Loading...#}
+{#        </div>#}
+{#    {% endif %}#}
+</div>
+
+</body>
+</html>
