@@ -1,4 +1,6 @@
 import whisper
+import os
+from TTS.api import TTS
 from moviepy.editor import VideoFileClip
 
 
@@ -24,3 +26,28 @@ def transcribe_audio(audio_path):
             end = f"{segment['end']:.2f}"
             transcript_file.write(f"## {start} - {end} :\n{text}\n\n")
     return transcript_path
+
+
+def tts_convertor(translated_file, target_language, name):
+    output_path = os.path.join("media", f"{name}_{target_language}.wav")
+    with open(translated_file, 'r', encoding='utf-8') as file:
+        lines = file.readlines()
+
+    text = ''
+    for line in lines:
+        if '##' in line or line == '\n':
+            continue
+        else:
+            text += line[:-1] + ' '
+
+    if target_language == 'French':
+        tts = TTS(model_name='tts_models/fr/mai/tacotron2-DDC', progress_bar=True)
+
+    elif target_language == 'German':
+        tts = TTS(model_name='tts_models/de/thorsten/tacotron2-DDC', progress_bar=True)
+    else:
+        # More languages not supported yet
+        return
+
+    tts.tts_to_file(text=text, path=output_path)
+    return output_path

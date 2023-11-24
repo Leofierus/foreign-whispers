@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from requests import RequestException
 
-from video_processor.processor import extract_audio, transcribe_audio
+from video_processor.processor import extract_audio, transcribe_audio, tts_convertor
 from .forms import VideoDownloadForm
 from .models import Video
 from pytube import YouTube
@@ -62,6 +62,10 @@ def download_video(request):
                 # Use t5-model to translate the transcript
                 translated_file = translate_file(extracted_transcript, target_language)
                 Video.objects.filter(title=yt.title).update(translated_transcript_path=translated_file)
+
+                # Use TTS API to generate the audio file
+                audio_file = tts_convertor(translated_file, target_language, name)
+                Video.objects.filter(title=yt.title).update(tts_audio_path=audio_file)
 
                 return download_status(request, True, None, name)
 
