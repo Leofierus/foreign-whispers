@@ -44,10 +44,17 @@ def tts_convertor(translated_file, target_language, name):
         tts = TTS(model_name='tts_models/fr/mai/tacotron2-DDC', progress_bar=True)
 
     elif target_language == 'German':
-        tts = TTS(model_name='tts_models/de/thorsten/tacotron2-DDC', progress_bar=True)
+        tts = TTS(model_name="tts_models/de/thorsten/tacotron2-DDC", progress_bar=True)
     else:
-        # More languages not supported yet
         return
 
-    tts.tts_to_file(text=text, path=output_path)
+    tts.tts_to_file(text=text, path="output.wav")
+    source_file = "output.wav"
+    if os.path.exists(source_file):
+        directory = "media"
+        new_filename = f"{name}_{target_language}.wav"
+        destination = os.path.join(directory, new_filename)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        os.rename(source_file, destination)
     return output_path

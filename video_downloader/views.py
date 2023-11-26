@@ -8,6 +8,7 @@ from pytube import YouTube
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
 from youtube_transcript_api import YouTubeTranscriptApi
 from translator.utils import translate_file
+import logging
 
 
 def download_video(request):
@@ -62,12 +63,23 @@ def download_video(request):
                 # Use t5-model to translate the transcript
                 translated_file = translate_file(extracted_transcript, target_language)
                 Video.objects.filter(title=yt.title).update(translated_transcript_path=translated_file)
-
                 # Use TTS API to generate the audio file
-                audio_file = tts_convertor(translated_file, target_language, name)
-                Video.objects.filter(title=yt.title).update(tts_audio_path=audio_file)
+                # audio_file = tts_convertor(translated_file, target_language, name)
+                # Video.objects.filter(title=yt.title).update(tts_audio_path=audio_file)
+                # return download_status(request, True, None, name)
 
-                return download_status(request, True, None, name)
+                logger = logging.getLogger(__name__)
+                try:
+                    audio_file = tts_convertor(translated_file, target_language, name)
+                    if not audio_file:
+                        raise Exception("TTS conversion failed")
+                    Video.objects.filter(title=yt.title).update(tts_audio_path=audio_file)
+                    logger.info("Successfully converted to audio")
+                    return download_status(request, True, None, name)
+
+                except Exception as e:
+                    logger.error("Failed to convert to audio: %s", str(e))
+                    return download_status(request, False, error_message)
 
             except (RegexMatchError, VideoUnavailable, PytubeError, RequestException) as e:
                 error_message = str(e)
