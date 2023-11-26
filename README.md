@@ -56,6 +56,7 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 <summary>Milestone 4</summary>
 
 </details>
+
 ## Team Members
 - Malhar Patel (mkp6112@nyu.edu)
 - Ruben Garcia (rg4352@nyu.edu)
