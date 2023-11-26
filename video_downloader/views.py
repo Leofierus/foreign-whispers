@@ -23,32 +23,21 @@ def download_video(request):
                 name = yt.video_id
                 video.download(filename='media/' + name + '.mp4')
 
-                captions = yt.captions.get_by_language_code('en')
-                captions_filename = f"{name}_captions.srt"
                 transcript_filename = f"{name}_transcript.txt"
+                transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
+                transcript_file_path = "media/" + transcript_filename
 
-                if captions:
-                    captions_content = captions.generate_srt_captions()
-                    captions_file_path = "media/" + captions_filename
-
-                    with open(captions_file_path, 'w', encoding='utf-8') as captions_file:
-                        captions_file.write(captions_content)
-                else:
-                    transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
-                    transcript_file_path = "media/" + transcript_filename
-
-                    with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
-                        for entry in transcript:
-                            transcript_file.write(f"## {entry['start']:.2f} - {(entry['start']+entry['duration']):.2f}")
-                            transcript_file.write(f":\n{entry['text']}\n\n")
+                with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
+                    for entry in transcript:
+                        transcript_file.write(f"## {entry['start']:.2f} - {(entry['start']+entry['duration']):.2f}")
+                        transcript_file.write(f":\n{entry['text']}\n\n")
 
                 # Create a new Video object in the database
                 Video.objects.create(
                     title=yt.title,
                     video_url=video_url,
                     downloaded_video_path=f"media/{name}.mp4",
-                    downloaded_captions_path=f"media/{captions_filename}" if captions else None,
-                    downloaded_transcript_path=f"media/{transcript_filename}" if not captions else None
+                    downloaded_transcript_path=f"media/{transcript_filename}"
                 )
 
                 # Extract audio from the downloaded video
