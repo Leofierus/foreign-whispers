@@ -52,6 +52,13 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/bca1c8d2-b6f9-4c25-912d-ee1d0632f881)
 </details>
 
+<details>
+<summary>Milestone 4</summary>
+The application will return an audio file within the media directory of the selected translation in a .wav format.
+<img width="1440" alt="Screenshot 2023-11-26 at 3 48 38 PM" src="https://github.com/Leofierus/foreign-whispers/assets/143608003/5d8272a9-3571-4c11-8dad-318b594039e9">
+<img width="1440" alt="Screenshot 2023-11-26 at 3 49 11 PM" src="https://github.com/Leofierus/foreign-whispers/assets/143608003/5115426f-53d6-4118-81d5-f237e322c6d9">
+</details>
+
 ## Team Members
 - Malhar Patel (mkp6112@nyu.edu)
 - Ruben Garcia (rg4352@nyu.edu)

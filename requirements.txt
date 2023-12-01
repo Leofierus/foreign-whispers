@@ -8,3 +8,5 @@ requests
 openai-whisper
 transformers
 sentencepiece
+TTS
+inflect

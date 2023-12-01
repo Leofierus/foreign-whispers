@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from requests import RequestException
 
-from video_processor.processor import extract_audio, transcribe_audio
+from video_processor.processor import extract_audio, transcribe_audio, tts_convertor
 from .forms import VideoDownloadForm
 from .models import Video
 from pytube import YouTube
@@ -23,32 +23,21 @@ def download_video(request):
                 name = yt.video_id
                 video.download(filename='media/' + name + '.mp4')
 
-                captions = yt.captions.get_by_language_code('en')
-                captions_filename = f"{name}_captions.srt"
                 transcript_filename = f"{name}_transcript.txt"
+                transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
+                transcript_file_path = "media/" + transcript_filename
 
-                if captions:
-                    captions_content = captions.generate_srt_captions()
-                    captions_file_path = "media/" + captions_filename
-
-                    with open(captions_file_path, 'w', encoding='utf-8') as captions_file:
-                        captions_file.write(captions_content)
-                else:
-                    transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
-                    transcript_file_path = "media/" + transcript_filename
-
-                    with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
-                        for entry in transcript:
-                            transcript_file.write(f"## {entry['start']:.2f} - {(entry['start']+entry['duration']):.2f}")
-                            transcript_file.write(f":\n{entry['text']}\n\n")
+                with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
+                    for entry in transcript:
+                        transcript_file.write(f"## {entry['start']:.2f} - {(entry['start']+entry['duration']):.2f}")
+                        transcript_file.write(f":\n{entry['text']}\n\n")
 
                 # Create a new Video object in the database
                 Video.objects.create(
                     title=yt.title,
                     video_url=video_url,
                     downloaded_video_path=f"media/{name}.mp4",
-                    downloaded_captions_path=f"media/{captions_filename}" if captions else None,
-                    downloaded_transcript_path=f"media/{transcript_filename}" if not captions else None
+                    downloaded_transcript_path=f"media/{transcript_filename}"
                 )
 
                 # Extract audio from the downloaded video
@@ -62,6 +51,10 @@ def download_video(request):
                 # Use t5-model to translate the transcript
                 translated_file = translate_file(extracted_transcript, target_language)
                 Video.objects.filter(title=yt.title).update(translated_transcript_path=translated_file)
+
+                # Use TTS API to generate the audio file
+                audio_file = tts_convertor(translated_file, target_language, name)
+                Video.objects.filter(title=yt.title).update(tts_audio_path=audio_file)
 
                 return download_status(request, True, None, name)
 
