@@ -10,3 +10,4 @@ transformers
 sentencepiece
 TTS
 inflect
+ffmpeg-python

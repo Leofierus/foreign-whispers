@@ -56,6 +56,17 @@ def tts_convertor(translated_file, target_language, name):
     return output_path
 
 
+def textify(result):
+    result = result.replace('@', 'at')
+    # Currency symbols
+    result = result.replace('€', 'Euro')
+    result = result.replace('$', 'Dollar')
+    result = result.replace('£', 'Pfund')
+    result = result.replace('¥', 'Yen')
+    result = result.replace('₹', 'Rupie')
+    return result
+
+
 def convert_data_french(text):
     p = inflect.engine()
     pattern = re.compile(r'(\d+)([.,!?])?')
@@ -67,8 +78,9 @@ def convert_data_french(text):
 
     result = pattern.sub(replace, text)
     result = result.replace('&', 'et')
-
-    return result
+    result = result.replace('%', 'pour cent')
+    result = result.replace('°', 'degrés')
+    return textify(result)
 
 
 def convert_data_german(text):
@@ -82,5 +94,6 @@ def convert_data_german(text):
 
     result = pattern.sub(replace, text)
     result = result.replace('&', 'und')
-
-    return result
+    result = result.replace('%', 'Prozent')
+    result = result.replace('°', 'Grad')
+    return textify(result)
