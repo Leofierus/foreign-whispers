@@ -35,6 +35,16 @@ h1 {
     padding-bottom: 20px;
 }
 
+.download-status {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding-bottom: 20px;
+}
+
 label {
     font-weight: bold;
 }
@@ -49,9 +59,56 @@ button {
     font-size: 16px;
 }
 
-.loader {
-    display: none;
+.download-buttons {
+    display: flex;
+    justify-content: center;
     margin-top: 20px;
-    font-size: 18px;
+}
+
+.download-button {
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: double;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.step-links {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.step-links a {
     color: #333;
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 4px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
+}
+
+.step-links a:hover {
+    background-color: #ddd;
+}
+
+.current {
+    color: #000;
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 4px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 4px;
 }

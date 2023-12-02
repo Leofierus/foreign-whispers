@@ -23,14 +23,14 @@
            rel="noopener noreferrer" title="GitHub">
             <img src="{% static 'github-mark.png' %}" alt="" width="50" height="50"/>
         </a>
-        <h1>&nbsp;&nbsp;Translate YouTube video's subtitles and generate translated audio&nbsp;&nbsp;</h1>
+        <h1>&nbsp;&nbsp;Translate a YouTube video and embed the translated attributes&nbsp;&nbsp;</h1>
         <a class="project-icon" href="https://pantelis.github.io/artificial-intelligence/aiml-common/projects/nlp/foreign-whispers/index.html"
            target="_blank" rel="noopener noreferrer" title="Project">
             <img src="{% static 'logo.png' %}" alt="" width="50" height="50"/>
         </a>
     </div>
 
-    <div class="body" id="input-form">
+    <div class="body">
         <form method="post" class="download-form" onsubmit="showProcessingMessage()">
             {% csrf_token %}
 
@@ -41,34 +41,11 @@
             {{ form.target_language }}
 
             <button type="submit">Process</button>
-
         </form>
 
         <p class="download-form" id="processing-message" style="display: none;">
             It might take 3-7 mins to process your video, please wait...
         </p>
-    </div>
-
-    <div class="body">
-        {% block content %}
-            {% if download_success %}
-                <script>
-                    const ele = document.getElementById("input-form");
-                    ele.style.display = "none";
-                </script>
-                <p>Video has been downloaded and renamed to <strong>{{ new_filename }}.mp4</strong></p>
-                <p>The audio has been extracted along with transcripts for the video.</p>
-                <p>The transcripts have been translated to the desired selection.</p>
-                <a href="{% url 'download_video' %}" class="back-link">Process again!</a>
-            {% elif download_error%}
-                <script>
-                    const ele = document.getElementById("input-form");
-                    ele.style.display = "none";
-                </script>
-                <p>Video download failed due to error: <strong>{{ download_error }}</strong></p>
-                <a href="{% url 'download_video' %}" class="back-link">Process again!</a>
-            {% endif %}
-        {% endblock %}
     </div>
 </div>
 

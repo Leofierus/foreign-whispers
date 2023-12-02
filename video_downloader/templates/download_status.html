@@ -1,0 +1,101 @@
+{% load static %}
+<!-- displayer.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Processor</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+
+<div class="main-container">
+    <div class="container">
+        <a class="github-icon" href="https://github.com/Leofierus/foreign-whispers" target="_blank"
+           rel="noopener noreferrer" title="GitHub">
+            <img src="{% static 'github-mark.png' %}" alt="" width="50" height="50"/>
+        </a>
+        <h1>&nbsp;&nbsp;Translate a YouTube video and embed the translated attributes&nbsp;&nbsp;</h1>
+        <a class="project-icon" href="https://pantelis.github.io/artificial-intelligence/aiml-common/projects/nlp/foreign-whispers/index.html"
+           target="_blank" rel="noopener noreferrer" title="Project">
+            <img src="{% static 'logo.png' %}" alt="" width="50" height="50"/>
+        </a>
+    </div>
+
+    <div class="body">
+        <div class="download-status">
+            {% block content %}
+                {% if download_success %}
+                    <h1>Subtitles</h1>
+                    <table style="border-collapse: collapse; width: 100%; margin: 10px;">
+                        <colgroup>
+                            <col style="width: 10%; background-color: #e8dac1;">
+                            <col style="width: 40%; background-color: #8febe1;">
+                            <col style="width: 40%; background-color: #d7c7f0;">
+                        </colgroup>
+                        <thead>
+                            <tr style="font-weight: bold;">
+                                <th style="border: 2px solid black;">Timestamps</th>
+                                <th style="border: 2px solid black;">Original text</th>
+                                <th style="border: 2px solid black;">Translated text</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in entries_page %}
+                                <tr>
+                                    <td style="border: 1px solid black;">{{ entry.timestamp }}</td>
+                                    <td style="border: 1px solid black;">{{ entry.english }}</td>
+                                    <td style="border: 1px solid black;">{{ entry.target_language }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="pagination">
+                        <span class="step-links">
+                            {% if entries_page.has_previous %}
+                                <a href="?page=1">&laquo; first</a>
+                                <a href="?page={{ entries_page.previous_page_number }}">previous</a>
+                            {% endif %}
+
+                            <span class="current">
+                                Page {{ entries_page.number }} of {{ entries_page.paginator.num_pages }}.
+                            </span>
+
+                            {% if entries_page.has_next %}
+                                <a href="?page={{ entries_page.next_page_number }}">next</a>
+                                <a href="?page={{ entries_page.paginator.num_pages }}">last &raquo;</a>
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="download-buttons">
+                        <a href="{% url 'download_subtitle' video_id=video_id language='original' %}" class="download-button">
+                            Download Original Subtitles
+                        </a>
+                        <span style="margin-right: 20px;"></span>
+                        <a href="{% url 'download_subtitle' video_id=video_id language='translated' %}" class="download-button">
+                            Download Translated Subtitles
+                        </a>
+                        <span style="margin-right: 20px;"></span>
+                        <a href="{% url 'download_subtitle' video_id=video_id language='video' %}" class="download-button">
+                            Download Translated Video
+                        </a>
+                        <span style="margin-right: 20px;"></span>
+                        <a href="{% url 'download_video' %}" class="download-button">Process again!</a>
+                    </div>
+
+                {% elif download_error%}
+                    <p>Video download failed due to error: <strong>{{ download_error }}</strong></p>
+                    <a href="{% url 'download_video' %}" class="back-link">Process again!</a>
+                {% endif %}
+
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
