@@ -51,6 +51,7 @@ def embed_subs_audio(video_path, extracted_transcript, audio_file, language):
 
     final_clip = video_clip.set_audio(audio_clip)
     final_clip.write_videofile(newer_path)
+    os.remove(new_path)
     return newer_path
 
 

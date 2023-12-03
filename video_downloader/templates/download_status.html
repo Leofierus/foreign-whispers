@@ -92,8 +92,11 @@
                     </div>
 
                 {% elif download_error%}
-                    <p>Video download failed due to error: <strong>{{ download_error }}</strong></p>
-                    <a href="{% url 'download_video' %}" class="back-link">Process again!</a>
+                    <p>Video download failed due to some error</p>
+                    <div class="download-buttons">
+                        <span style="margin-right: 20px;"></span>
+                        <a href="{% url 'download_video' %}" class="download-button">Process again!</a>
+                    </div>
                 {% endif %}
 
             {% endblock %}

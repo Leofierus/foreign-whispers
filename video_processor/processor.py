@@ -1,5 +1,8 @@
 import shutil
 
+import librosa
+import soundfile as sf
+import pyrubberband as pyrb
 import whisper
 import inflect
 import os
@@ -50,47 +53,12 @@ def beautify_entries(subtitle_entries, total_dur):
     return final_entries
 
 
-def beautify_audios(audio_files, original_dur, expected_dur, adjusted_dur):
-    has_started = False
-    final_files = []
-    duration_buffer = 0
-
-    for i in range(len(audio_files)):
-        if adjusted_dur[i] == 99999:
-            if not has_started:
-                final_files.append(AudioSegment.silent(expected_dur[i] * 1000))
-                has_started = True
-            else:
-                if expected_dur[i] * 1000 < duration_buffer:
-                    final_files.append(AudioSegment.silent(duration_buffer - (expected_dur[i] * 1000)))
-                    duration_buffer -= expected_dur[i] * 1000
-                else:
-                    final_files.append(AudioSegment.silent((expected_dur[i] * 1000) - duration_buffer))
-                    duration_buffer = 0
-        elif original_dur[i] > expected_dur[i] * 1000:
-            final_files.append(audio_files[i])
-            duration_buffer += original_dur[i] - expected_dur[i] * 1000
-        else:
-            if original_dur[i] + duration_buffer < expected_dur[i] * 1000:
-                final_files.append(audio_files[i] + AudioSegment
-                                   .silent((expected_dur[i] * 1000) - (original_dur[i] + duration_buffer)))
-                duration_buffer = 0
-            else:
-                final_files.append(audio_files[i] + AudioSegment.silent((expected_dur[i] * 1000) - (original_dur[i])))
-                duration_buffer -= (expected_dur[i] * 1000) - (original_dur[i])
-
-    return final_files
-
-
 def tts_convertor(translated_file, target_language, name):
     output_path = os.path.join("media", f"{name}_{target_language}.wav")
     with open(translated_file, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
     subtitle_entries = []
-    original_dur = []
-    expected_dur = []
-    adjusted_dur = []
     data = ''
     timestamp, start_time, end_time = None, None, None
     duration = VideoFileClip(f"media/{name}.mp4").duration
@@ -132,24 +100,22 @@ def tts_convertor(translated_file, target_language, name):
     for entry in final_entries:
         if entry['text'] == "<empty>":
             audio_files.append(AudioSegment.silent(duration=(entry['end'] - entry['start']) * 1000))
-            original_dur.append(0)
-            expected_dur.append(entry['end'] - entry['start'])
-            adjusted_dur.append(99999)
         else:
             tts.tts_to_file(text=entry['text'], file_path=f"media/{name}/{entry['end']}.wav")
 
             audio_file = AudioSegment.from_wav(f"media/{name}/{entry['end']}.wav")
+            original_dur = len(audio_file)
+            expected_dur = (entry['end'] - entry['start']) * 1000
+            y, sr = librosa.load(f"media/{name}/{entry['end']}.wav")
+            speedup_factor = original_dur / expected_dur
+            y_output = pyrb.time_stretch(y, sr, speedup_factor)
+            sf.write(f"media/{name}/{entry['end']}.wav", y_output, sr)
 
-            original_dur.append(len(audio_file))
-            expected_dur.append(entry['end'] - entry['start'])
-            adjusted_dur.append(0)
-
+            audio_file = AudioSegment.from_wav(f"media/{name}/{entry['end']}.wav")
             audio_files.append(audio_file)
 
-    final_files = beautify_audios(audio_files, original_dur, expected_dur, adjusted_dur)
-
     final_audio = AudioSegment.empty()
-    for audio_file in final_files:
+    for audio_file in audio_files:
         final_audio += audio_file
 
     final_audio.export(output_path, format="wav")

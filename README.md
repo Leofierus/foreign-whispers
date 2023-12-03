@@ -7,9 +7,10 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 1. Clone the repository to your local machine.
 2. Create a Python virtual environment and activate it.
 3. Install project dependencies using `pip install -r requirements.txt`.
-4. Run Django migrations: `python manage.py migrate`.
-5. Start the development server: `python manage.py runserver`.
-6. Access the application in your web browser at [http://localhost:8000/video_downloader/download](http://localhost:8000/video_downloader/download/).
+4. It also requires [rubberband](https://breakfastquay.com/rubberband/index.html) to be installed on your system.
+5. Run Django migrations: `python manage.py migrate`.
+6. Start the development server: `python manage.py runserver`.
+7. Access the application in your web browser at [http://localhost:8000/video_downloader/download](http://localhost:8000/video_downloader/download/).
 
 ## Usage
 

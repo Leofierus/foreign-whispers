@@ -12,3 +12,6 @@ TTS
 inflect
 ffmpeg-python
 pydub
+librosa
+soundfile
+pyrubberband
