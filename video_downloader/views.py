@@ -83,6 +83,34 @@ def paginate_data(request, extracted_transcript, translated_file, param):
     return paginated_subs
 
 
+def srt_convertor(lines):
+    subtitles = []
+    index = 1
+    for i in range(0, len(lines)):
+        if '##' in lines[i]:
+            time_interval = (lines[i].strip().replace(" - ", " --> ")
+                             .replace("## ", "").replace(" :", "").replace(":", ""))
+            time_intervall = time_interval.split(" --> ")
+            start_delta = timedelta(seconds=float(time_intervall[0]))
+            formatted_time = str(start_delta).split(".")[0]
+            milliseconds = str(int(start_delta.microseconds / 1000)).zfill(3)
+            time_intervall[0] = f"{formatted_time},{milliseconds}"
+
+            end_delta = timedelta(seconds=float(time_intervall[1]))
+            formatted_time = str(end_delta).split(".")[0]
+            milliseconds = str(int(end_delta.microseconds / 1000)).zfill(3)
+            time_intervall[1] = f"{formatted_time},{milliseconds}"
+
+            time_interval = " --> ".join(time_intervall)
+
+            text = lines[i + 1].strip()
+            subtitle = f"{index}\n{time_interval}\n{text}\n\n"
+            index += 1
+            subtitles.append(subtitle)
+
+    return subtitles
+
+
 def download_video(request):
     if request.method == 'POST':
         form = VideoDownloadForm(request.POST)
@@ -199,29 +227,6 @@ def download_subtitle(request, video_id, language):
     return response
 
 
-def srt_convertor(lines):
-    subtitles = []
-    index = 1
-    for i in range(0, len(lines)):
-        if '##' in lines[i]:
-            time_interval = (lines[i].strip().replace(" - ", " --> ")
-                             .replace("## ", "").replace(" :", "").replace(":", ""))
-            time_intervall = time_interval.split(" --> ")
-            start_delta = timedelta(seconds=float(time_intervall[0]))
-            formatted_time = str(start_delta).split(".")[0]
-            milliseconds = str(int(start_delta.microseconds / 1000)).zfill(3)
-            time_intervall[0] = f"{formatted_time},{milliseconds}"
-
-            end_delta = timedelta(seconds=float(time_intervall[1]))
-            formatted_time = str(end_delta).split(".")[0]
-            milliseconds = str(int(end_delta.microseconds / 1000)).zfill(3)
-            time_intervall[1] = f"{formatted_time},{milliseconds}"
-
-            time_interval = " --> ".join(time_intervall)
-
-            text = lines[i + 1].strip()
-            subtitle = f"{index}\n{time_interval}\n{text}\n\n"
-            index += 1
-            subtitles.append(subtitle)
-
-    return subtitles
+def view_video(request, video_id):
+    video_path = f"../../media/{video_id}_dubbed.mp4"
+    return render(request, 'view_video.html', {'video_path': video_path, 'video_id': video_id})

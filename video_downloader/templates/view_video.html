@@ -1,0 +1,56 @@
+{% load static %}
+<!-- view_video.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Video Processor</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+<div class="main-container">
+    <div class="container">
+        <a class="github-icon" href="https://github.com/Leofierus/foreign-whispers" target="_blank"
+           rel="noopener noreferrer" title="GitHub">
+            <img src="{% static 'github-mark.png' %}" alt="" width="50" height="50"/>
+        </a>
+        <h1>&nbsp;&nbsp;Translate a YouTube video and embed the translated attributes&nbsp;&nbsp;</h1>
+        <a class="project-icon" href="https://pantelis.github.io/artificial-intelligence/aiml-common/projects/nlp/foreign-whispers/index.html"
+           target="_blank" rel="noopener noreferrer" title="Project">
+            <img src="{% static 'logo.png' %}" alt="" width="50" height="50"/>
+        </a>
+    </div>
+
+    <div class="body">
+        <div class="video-box">
+            <h1>View Translated Video</h1>
+            <video width="640" height="360" controls autoplay>
+                <source src="{{ video_path }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <div class="download-buttons">
+            <a href="{% url 'download_subtitle' video_id=video_id language='original' %}" class="download-button">
+                Download Original Subtitles
+            </a>
+            <span style="margin-right: 20px;"></span>
+            <a href="{% url 'download_subtitle' video_id=video_id language='translated' %}" class="download-button">
+                Download Translated Subtitles
+            </a>
+            <span style="margin-right: 20px;"></span>
+            <a href="{% url 'download_subtitle' video_id=video_id language='video' %}" class="download-button">
+                Download Translated Video
+            </a>
+            <span style="margin-right: 20px;"></span>
+            <a href="{% url 'download_status' video_id=video_id %}" class="download-button">Go Back</a>
+            <span style="margin-right: 20px;"></span>
+            <a href="{% url 'download_video' %}" class="download-button">Process again!</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

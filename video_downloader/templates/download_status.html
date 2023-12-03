@@ -80,6 +80,10 @@
                             Download Translated Subtitles
                         </a>
                         <span style="margin-right: 20px;"></span>
+                        <a href="{% url 'view_video' video_id=video_id %}" class="download-button">
+                            View Translated Video
+                        </a>
+                        <span style="margin-right: 20px;"></span>
                         <a href="{% url 'download_subtitle' video_id=video_id language='video' %}" class="download-button">
                             Download Translated Video
                         </a>
