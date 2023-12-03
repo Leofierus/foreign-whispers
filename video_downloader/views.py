@@ -119,6 +119,12 @@ def download_video(request):
             video_url = form.cleaned_data['video_url']
             target_language = form.cleaned_data['target_language']
 
+            if video_url.__contains__('clean'):
+                Video.objects.all().delete()
+                for file in os.listdir('media'):
+                    os.remove(f"media/{file}")
+                return redirect(reverse('download_video'))
+
             try:
                 yt = YouTube(video_url)
                 video = yt.streams.get_highest_resolution()
