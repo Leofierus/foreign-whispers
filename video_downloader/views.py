@@ -224,12 +224,10 @@ def download_subtitle(request, video_id, language):
         return HttpResponse("Invalid language specified.")
 
     with open(subtitle_path, 'r', encoding='utf-8') as subtitle_file:
-        lines = subtitle_file.readlines()
-
-    subtitles = srt_convertor(lines)
+        subtitles = subtitle_file.read()
 
     response = HttpResponse(subtitles, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename={language}_subtitles.srt'
+    response['Content-Disposition'] = f'attachment; filename={language}_subtitles.txt'
 
     return response
 
