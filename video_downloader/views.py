@@ -229,7 +229,7 @@ def download_subtitle(request, video_id, language):
     subtitles = srt_convertor(lines)
 
     response = HttpResponse(subtitles, content_type='text/plain')
-    response['Content-Disposition'] = f'attachment; filename={language}_subtitles.srt'
+    response['Content-Disposition'] = f'attachment; filename={language}_subtitles.txt'
 
     return response
 
