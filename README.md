@@ -62,6 +62,15 @@ The application will return an audio file within the media directory of the sele
 <img width="1440" alt="Screenshot 2023-11-26 at 3 49 11 PM" src="https://github.com/Leofierus/foreign-whispers/assets/143608003/5115426f-53d6-4118-81d5-f237e322c6d9">
 </details>
 
+<details>
+<summary>Milestone 5</summary>
+  
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/655f6dff-34d6-4034-a99e-c64f1c64a158)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/4d28cfbd-e063-403a-b11a-42301c088820)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/10009143-07b7-437c-bfb1-ef7b00e2b3c7)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/e0276f15-a970-42e6-a50a-5036a2e7e85a)
+</details>
+
 ## Team Members
 - Malhar Patel (mkp6112@nyu.edu)
 - Ruben Garcia (rg4352@nyu.edu)
