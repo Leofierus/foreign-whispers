@@ -69,9 +69,9 @@ The application will return an audio file within the media directory of the sele
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/4d28cfbd-e063-403a-b11a-42301c088820)
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/10009143-07b7-437c-bfb1-ef7b00e2b3c7)
 ![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/e0276f15-a970-42e6-a50a-5036a2e7e85a)
-![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/8a183fc7-8dd8-4f33-a585-90cf5b33d4dc)
-![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/d6d47ad6-6bec-4d85-be4c-9be85c78de5e)
-![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/61636cec-5c4f-430a-a161-ef67f8ea756b)
+![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/15dc22a5-78ad-4ecd-a5a0-cff99bc8b6d2)
+![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/fd555029-56bb-4476-8ab5-7e3ef4e47bc2)
+![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/1625b385-7cfb-47ac-907a-51d62b8c8f36)
 
 </details>
 
