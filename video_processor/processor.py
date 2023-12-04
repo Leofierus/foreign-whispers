@@ -1,9 +1,15 @@
+import shutil
+
+import librosa
+import soundfile as sf
+import pyrubberband as pyrb
 import whisper
 import inflect
 import os
 import re
 from TTS.api import TTS
 from moviepy.editor import VideoFileClip
+from pydub import AudioSegment
 
 
 def extract_audio(video_path):
@@ -30,30 +36,103 @@ def transcribe_audio(audio_path):
     return transcript_path
 
 
+def beautify_entries(subtitle_entries, total_dur):
+    final_entries = []
+    if subtitle_entries[0]['start'] != 0:
+        final_entries.append({"start": 0, "end": subtitle_entries[0]['start'], "text": "<empty>"})
+
+    for i in range(len(subtitle_entries)):
+        if i != 0 and subtitle_entries[i - 1]['end'] != subtitle_entries[i]['start']:
+            final_entries.append({"start": subtitle_entries[i - 1]['end'], "end": subtitle_entries[i]['start'],
+                                  "text": "<empty>"})
+        final_entries.append(subtitle_entries[i])
+
+    if subtitle_entries[-1]['end'] != total_dur:
+        final_entries.append({"start": subtitle_entries[-1]['end'], "end": total_dur, "text": "<empty>"})
+
+    return final_entries
+
+
 def tts_convertor(translated_file, target_language, name):
     output_path = os.path.join("media", f"{name}_{target_language}.wav")
     with open(translated_file, 'r', encoding='utf-8') as file:
         lines = file.readlines()
 
+    subtitle_entries = []
     data = ''
-    for line in lines:
-        if '##' in line or line == '\n':
+    timestamp, start_time, end_time = None, None, None
+    duration = VideoFileClip(f"media/{name}.mp4").duration
+
+    for i in range(len(lines)):
+        if '##' in lines[i]:
+            timestamp = lines[i].replace('## ', '').replace(' :', '').replace(' :\n', '')
+            start_time, end_time = map(float, timestamp.split(" - "))
+            if lines[i + 1] == '\n':
+                subtitle_entries.append({"start": start_time, "end": end_time,
+                                         "text": "<empty>"})
+        elif lines[i] == '\n':
             continue
         else:
-            data += line[:-1] + ' '
+            subtitle_entries.append({"start": start_time, "end": end_time,
+                                     "text": lines[i].lstrip() if lines[i].lstrip() != '' else "<empty>"})
+            data += lines[i][:-1] + ' '
+
+    final_entries = beautify_entries(subtitle_entries, duration)
 
     if target_language == 'French':
         tts = TTS(model_name='tts_models/fr/css10/vits', progress_bar=True)
-        data = convert_data_french(data)
+        # data = convert_data_french(data)
+        for entry in final_entries:
+            entry['text'] = convert_data_french(entry['text'])
     elif target_language == 'German':
         tts = TTS(model_name='tts_models/de/css10/vits-neon', progress_bar=True)
-        data = convert_data_german(data)
+        # data = convert_data_german(data)
+        for entry in final_entries:
+            entry['text'] = convert_data_german(entry['text'])
     else:
         # More languages not supported yet
-        return
+        return None
 
-    tts.tts_to_file(text=data, file_path=output_path)
+    audio_files = []
+    if not os.path.exists(f"media/{name}"):
+        os.mkdir(f"media/{name}")
+
+    for entry in final_entries:
+        if entry['text'] == "<empty>":
+            audio_files.append(AudioSegment.silent(duration=(entry['end'] - entry['start']) * 1000))
+        else:
+            tts.tts_to_file(text=entry['text'], file_path=f"media/{name}/{entry['end']}.wav")
+
+            audio_file = AudioSegment.from_wav(f"media/{name}/{entry['end']}.wav")
+            original_dur = len(audio_file)
+            expected_dur = (entry['end'] - entry['start']) * 1000
+            y, sr = librosa.load(f"media/{name}/{entry['end']}.wav")
+            speedup_factor = original_dur / expected_dur
+            y_output = pyrb.time_stretch(y, sr, speedup_factor)
+            sf.write(f"media/{name}/{entry['end']}.wav", y_output, sr)
+
+            audio_file = AudioSegment.from_wav(f"media/{name}/{entry['end']}.wav")
+            audio_files.append(audio_file)
+
+    final_audio = AudioSegment.empty()
+    for audio_file in audio_files:
+        final_audio += audio_file
+
+    final_audio.export(output_path, format="wav")
+    shutil.rmtree(f"media/{name}")
+
     return output_path
+
+
+def textify(result):
+    result = result.replace('@', 'at')
+    # Currency symbols
+    result = result.replace('€', 'Euro')
+    result = result.replace('$', 'Dollar')
+    result = result.replace('£', 'Pfund')
+    result = result.replace('¥', 'Yen')
+    result = result.replace('₹', 'Rupie')
+    return result
 
 
 def convert_data_french(text):
@@ -67,8 +146,9 @@ def convert_data_french(text):
 
     result = pattern.sub(replace, text)
     result = result.replace('&', 'et')
-
-    return result
+    result = result.replace('%', 'pour cent')
+    result = result.replace('°', 'degrés')
+    return textify(result)
 
 
 def convert_data_german(text):
@@ -82,5 +162,6 @@ def convert_data_german(text):
 
     result = pattern.sub(replace, text)
     result = result.replace('&', 'und')
-
-    return result
+    result = result.replace('%', 'Prozent')
+    result = result.replace('°', 'Grad')
+    return textify(result)
