@@ -1,6 +1,14 @@
 # Foreign Whispers - YouTube Video Downloader
 
-Foreign Whispers is a Django web application that allows users to download YouTube videos and their associated captions and transcripts along with extracting the audio from the file and then using [whisper](https://github.com/openai/whisper) library to transcribe the audio file.
+Foreign Whispers is a Django web application that allows users to download YouTube videos with captions and transcripts in multiple languages along with a bunch of AI models to translate the generated text to the user-desired language. The application uses the [pytube](https://pytube.io/) library to download videos and captions, and the [whisper](https://github.com/openai/whisper) library to generate transcripts. The application also uses the [Mozilla TTS](https://tts.readthedocs.io/en/latest/tutorial_for_nervous_beginners.html) library to generate audio files from the transcripts and a mix of [librosa](https://librosa.org/), [soundfile](https://python-soundfile.readthedocs.io/en/0.11.0/) and [moviepy](https://zulko.github.io/moviepy/) to embed the audio file into the video.
+
+## YouTube Demo Link
+https://youtu.be/3plIfwKIbFQ
+
+## Example outputs of the application
+1. English to French: [Drive Link](https://drive.google.com/file/d/1Bulh9-KI_4KIDMoORQqxYUGn4zX2sFqL/view?usp=sharing)
+2. English to German: [Drive Link](https://drive.google.com/file/d/1_aJITS4zPovRrP60tHlpvwf2Z85H3jkE/view?usp=sharing)
+
 
 ## Installation
 
@@ -16,13 +24,7 @@ Foreign Whispers is a Django web application that allows users to download YouTu
 
 1. Visit the homepage and provide a YouTube video URL.
 2. Click the "Download" button to initiate the download process.
-3. The video, captions (if available), and transcript (if necessary) will be saved in the 'media/' directory.
-
-## Project Structure
-
-- `video_downloader/`: Django app containing views, models, and templates.
-- `media/`: Directory for storing downloaded videos, captions, and transcripts.
-- `templates/`: HTML templates used in the project.
+3. The video, captions (if available), and transcript (if necessary) will be saved in the `media/` directory.
 
 ## Project Screenshots
 
