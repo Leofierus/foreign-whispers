@@ -1,13 +1,13 @@
 pandas
 numpy
+matplotlib==3.4.3
 Django
 django-crispy-forms
-pytube3
 youtube-transcript-api
 moviepy
+yt-dlp
 pytube
 requests
-matplotlib==3.4.3
 openai-whisper
 transformers
 sentencepiece

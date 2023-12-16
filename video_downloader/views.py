@@ -15,6 +15,7 @@ from video_processor.processor import extract_audio, transcribe_audio, tts_conve
 from .forms import VideoDownloadForm
 from .models import Video
 from pytube import YouTube
+from yt_dlp import YoutubeDL
 from pytube.exceptions import RegexMatchError, VideoUnavailable, PytubeError
 from youtube_transcript_api import YouTubeTranscriptApi
 from translator.utils import translate_file
@@ -126,13 +127,22 @@ def download_video(request):
                 return redirect(reverse('download_video'))
 
             try:
-                yt = YouTube(video_url)
-                video = yt.streams.get_highest_resolution()
-                name = yt.video_id
-                video.download(filename='media/' + name + '.mp4')
+                # yt = YouTube(video_url)
+                # video = yt.streams.get_highest_resolution()
+                # name = yt.video_id
+                # video.download(filename='media/' + name + '.mp4')
+                urls = [video_url]
+                yt_dlp_options = {
+                    'format': 'bestvideo+bestaudio',
+                    'merge_output_format': 'mp4',
+                    'outtmpl': f'media/%(id)s.%(ext)s'
+                }
+                with YoutubeDL(yt_dlp_options) as ydl:
+                    yt = ydl.extract_info(urls[0], download=True)
+                    name = yt['id']
 
                 transcript_filename = f"{name}_transcript.txt"
-                transcript = YouTubeTranscriptApi.get_transcript(yt.video_id)
+                transcript = YouTubeTranscriptApi.get_transcript(yt['id'])
                 transcript_file_path = "media/" + transcript_filename
 
                 with open(transcript_file_path, 'w', encoding='utf-8') as transcript_file:
@@ -141,9 +151,9 @@ def download_video(request):
                         transcript_file.write(f":\n{entry['text']}\n\n")
 
                 # Create a new Video object in the database if same video is not already downloaded
-                Video.objects.filter(title=yt.title).delete()
+                Video.objects.filter(title=yt['title']).delete()
                 Video.objects.create(
-                    title=yt.title,
+                    title=yt['title'],
                     video_url=video_url,
                     downloaded_video_path=f"media/{name}.mp4",
                     downloaded_transcript_path=f"media/{transcript_filename}"
@@ -151,29 +161,32 @@ def download_video(request):
 
                 # Extract audio from the downloaded video
                 extracted_audio = extract_audio(f"media/{name}.mp4")
-                Video.objects.filter(title=yt.title).update(extracted_audio_path=extracted_audio)
+                Video.objects.filter(title=yt['title']).update(extracted_audio_path=extracted_audio)
 
                 # Use whisper to transcribe the audio
                 extracted_transcript = transcribe_audio(extracted_audio)
-                Video.objects.filter(title=yt.title).update(extracted_transcript_path=extracted_transcript)
+                Video.objects.filter(title=yt['title']).update(extracted_transcript_path=extracted_transcript)
 
                 # Use t5-model to translate the transcript
                 translated_file = translate_file(extracted_transcript, target_language)
-                Video.objects.filter(title=yt.title).update(translated_transcript_path=translated_file)
+                Video.objects.filter(title=yt['title']).update(translated_transcript_path=translated_file)
 
                 # Use TTS API to generate the audio files
                 audio_file = tts_convertor(translated_file, target_language, name)
                 if target_language == 'French':
-                    Video.objects.filter(title=yt.title).update(french_tts_audio_path=audio_file)
+                    Video.objects.filter(title=yt['title']).update(french_tts_audio_path=audio_file)
                 elif target_language == 'German':
-                    Video.objects.filter(title=yt.title).update(german_tts_audio_path=audio_file)
+                    Video.objects.filter(title=yt['title']).update(german_tts_audio_path=audio_file)
 
                 embedded_video = embed_subs_audio(f"media/{name}.mp4", translated_file, audio_file, target_language)
-                Video.objects.filter(title=yt.title).update(embedded_video_path=embedded_video)
+                Video.objects.filter(title=yt['title']).update(embedded_video_path=embedded_video)
 
                 return redirect(reverse('download_status', args=[str(name)]))
 
             except (RegexMatchError, VideoUnavailable, PytubeError, RequestException) as e:
+                error_message = str(e)
+                return redirect(reverse('download_status', args=[error_message]))
+            except Exception as e:
                 error_message = str(e)
                 return redirect(reverse('download_status', args=[error_message]))
     else:
