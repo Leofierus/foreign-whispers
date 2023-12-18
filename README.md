@@ -11,7 +11,8 @@ https://youtu.be/3plIfwKIbFQ
 
 
 ## Installation
-
+The installation and project setup can be done in two ways:
+### Installing locally (Given you have python in your local machine)
 1. Clone the repository to your local machine.
 2. Create a Python virtual environment and activate it.
 3. Install project dependencies using `pip install -r requirements.txt`.
@@ -19,6 +20,12 @@ https://youtu.be/3plIfwKIbFQ
 5. Run Django migrations: `python manage.py migrate`.
 6. Start the development server: `python manage.py runserver`.
 7. Access the application in your web browser at [http://localhost:8000/video_downloader/download](http://localhost:8000/video_downloader/download/).
+### Booting up the project using Docker, which only needs docker installed on your machine.
+1. Open the root of the project (where the Dockerfile is installed)
+2. Execute the command: `docker-compose up --build -d`
+3. It will take about 300-900s for the initial project setup depending on your network configuration.
+4. It launches a docker image on successful build containing the project which can be access in your web browser at [http://localhost:8000/video_downloader/download](http://localhost:8000/video_downloader/download/).
+
 
 ## Usage
 
@@ -74,6 +81,14 @@ The application will return an audio file within the media directory of the sele
 ![image](https://github.com/Leofierus/foreign-whispers/assets/143608003/1625b385-7cfb-47ac-907a-51d62b8c8f36)
 
 </details>
+<details>
+<summary>Milestone 6</summary>
+  
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/1c1244d5-1fe8-43b9-8442-1f0680ba650b)
+![image](https://github.com/Leofierus/foreign-whispers/assets/51908556/9eb1cdc0-0fbc-460c-9c98-eaa666f2730c)
+
+</details>
+
 
 ## Team Members
 - Malhar Patel (mkp6112@nyu.edu)
